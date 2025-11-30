@@ -1,0 +1,13 @@
+//creating hooks
+
+mkdir hooks
+cd hooks
+npm init -y
+tsc --init
+change rootdir and out dir
+mkdir src
+cd src
+create index.ts
+cd hooks
+npm install prisma
+npx prisma init
