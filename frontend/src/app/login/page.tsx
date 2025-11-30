@@ -6,6 +6,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { BACKEND_URL } from "../config";
 import axios from "axios";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api/v1";
+
 
 const Login = () => {
   const router = useRouter();
@@ -18,7 +20,7 @@ const Login = () => {
     setError(""); // Reset error state before a new request
 
     try {
-      const res = await axios.post("http://localhost:3000/api/v1/user/signin", {
+      const res = await axios.post(`${API_URL}/user/signin`, {
         username: email,
         password: password,
       });

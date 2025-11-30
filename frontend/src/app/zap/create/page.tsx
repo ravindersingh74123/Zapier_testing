@@ -10,17 +10,20 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api/v1";
+
+
 function useAvailableActionsAndTriggers() {
   const [availableActions, setAvailableActions] = useState([]);
   const [availableTriggers, setAvailableTriggers] = useState([]);
 
   useEffect(() => {
     axios
-      .get(`${BACKEND_URL}/api/v1/trigger/available`)
+      .get(`${API_URL}/trigger/available`)
       .then((x) => setAvailableTriggers(x.data.availableTriggers));
 
     axios
-      .get(`${BACKEND_URL}/api/v1/action/available`)
+      .get(`${API_URL}/action/available`)
       .then((x) => setAvailableActions(x.data.availableActions));
   }, []);
 
@@ -90,7 +93,7 @@ export default function () {
 
 
             const response = await axios.post(
-              `${BACKEND_URL}/api/v1/zap`,
+              `${API_URL}/zap`,
               {
                 availableTriggerId: selectedTrigger.id,
                 triggerMetadata: {},

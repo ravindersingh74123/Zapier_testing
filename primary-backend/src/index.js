@@ -9,11 +9,13 @@ const zapRouter_1 = require("./router/zapRouter");
 const cors_1 = __importDefault(require("cors"));
 const triggerRouter_1 = require("./router/triggerRouter");
 const actionRouter_1 = require("./router/actionRouter");
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use((0, cors_1.default)());
 const corsOptions = {
-    origin: ["http://localhost:3001"], // Replace with your frontend URL
+    origin: ["*"], // Replace with your frontend URL
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
 };

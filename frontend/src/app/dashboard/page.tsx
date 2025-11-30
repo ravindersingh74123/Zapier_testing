@@ -7,6 +7,9 @@ import { BACKEND_URL, HOOKS_URL } from "../config";
 import { LinkButton } from "@/components/buttons/LinkButton";
 import { useRouter } from "next/navigation";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api/v1";
+
+
 interface Zap {
   id: string;
   triggerId: string;
@@ -40,7 +43,7 @@ function useZaps() {
 
   useEffect(() => {
     axios
-      .get(`${BACKEND_URL}/api/v1/zap`, {
+      .get(`${API_URL}/zap`, {
         headers: {
           Authorization: localStorage.getItem("token"),
         },

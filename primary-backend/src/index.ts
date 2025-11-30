@@ -4,14 +4,15 @@ import { zapRouter } from "./router/zapRouter";
 import cors from "cors";
 import { triggerRouter } from "./router/triggerRouter";
 import { actionRouter } from "./router/actionRouter";
-
+import dotenv from "dotenv";
+dotenv.config();
 const app = express();
 
 app.use(express.json());
 app.use(cors());
 
 const corsOptions = {
-  origin: ["http://localhost:3001"], // Replace with your frontend URL
+  origin: ["*"], // Replace with your frontend URL
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
 };

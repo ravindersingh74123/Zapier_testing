@@ -8,6 +8,9 @@ import { useRouter } from "next/navigation";
 import { BACKEND_URL } from "../config";
 import axios from "axios";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api/v1";
+
+
 const SignUp = () => {
   const router = useRouter();
   const [username, setUsername] = useState("");
@@ -26,7 +29,7 @@ const SignUp = () => {
     }
 
     try {
-      await axios.post("http://localhost:3000/api/v1/user/signup", {
+      await axios.post(`${API_URL}/user/signup`, {
         username: email,
         password: password,
         name: username,
