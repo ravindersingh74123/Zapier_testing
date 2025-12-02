@@ -1,8 +1,7 @@
 import { Router } from "express";
 import { authMiddleware } from "./middleware";
 import { ZapCreateSchema } from "../types";
-import { prismaClient } from "../db";
-
+import prisma from "../db/index";
 // const router = Router();
 
 // // @ts-ignore
@@ -19,8 +18,8 @@ import { prismaClient } from "../db";
 //     });
 //   }
 
-//   const zapId = await prismaClient.$transaction(async (tx) => {
-//     const zap = await prismaClient.zap.create({
+//   const zapId = await prisma.$transaction(async (tx) => {
+//     const zap = await prisma.zap.create({
 //       data: {
 //         userId: parseInt(id),
 //         triggerId: "",
@@ -62,7 +61,7 @@ import { prismaClient } from "../db";
 // router.get("/", authMiddleware, async (req, res) => {
 //   // @ts-ignore
 //   const id = req.id;
-//   const zaps = await prismaClient.zap.findMany({
+//   const zaps = await prisma.zap.findMany({
 //     where: {
 //       userId: id,
 //     },
@@ -94,7 +93,7 @@ import { prismaClient } from "../db";
 //   const id = req.id;
 //   const zapId = req.params.zapId;
 
-//   const zap = await prismaClient.zap.findFirst({
+//   const zap = await prisma.zap.findFirst({
 //     where: {
 //       id: zapId,
 //       userId: id,
@@ -130,7 +129,7 @@ import { prismaClient } from "../db";
 // import { Router } from "express";
 // import { authMiddleware } from "../middleware";
 // import { ZapCreateSchema } from "../types";
-// import { prismaClient } from "../db";
+// import { prisma } from "../db";
 
 const router = Router();
 
@@ -149,8 +148,8 @@ router.post("/", authMiddleware, async (req, res) => {
         });
     }   
 
-    const zapId = await prismaClient.$transaction(async tx => {
-        const zap = await prismaClient.zap.create({
+    const zapId = await prisma.$transaction(async tx => {
+        const zap = await prisma.zap.create({
             data: {
                 userId: parseInt(id),
                 triggerId: "",
@@ -194,7 +193,7 @@ router.post("/", authMiddleware, async (req, res) => {
 router.get("/", authMiddleware, async (req, res) => {
     // @ts-ignore
     const id = req.id;
-    const zaps = await prismaClient.zap.findMany({
+    const zaps = await prisma.zap.findMany({
         where: {
             userId: id
         },
@@ -225,7 +224,7 @@ router.get("/:zapId", authMiddleware, async (req, res) => {
     const id = req.id;
     const zapId = req.params.zapId;
 
-    const zap = await prismaClient.zap.findFirst({
+    const zap = await prisma.zap.findFirst({
         where: {
             id: zapId,
             userId: id

@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { authMiddleware } from "./middleware";
 import { SigninSchema, SignupSchema } from "../types";
-import { prismaClient } from "../db/index";
+import prisma from "../db/index";
 import jwt from "jsonwebtoken";
 import { JWT_PASSWORD } from "../config";
 
@@ -19,7 +19,7 @@ router.post("/signup", async (req, res) => {
     });
   }
 
-  const userExists = await prismaClient.user.findFirst({
+  const userExists = await prisma.user.findFirst({
     where: {
       email: parseData.data.username,
     },
@@ -31,7 +31,7 @@ router.post("/signup", async (req, res) => {
     });
   }
 
-  await prismaClient.user.create({
+  await prisma.user.create({
     data: {
       email: parseData.data.username,
       password: parseData.data.password,
@@ -57,7 +57,7 @@ router.post("/signin", async (req, res) => {
     });
   }
 
-  const user = await prismaClient.user.findFirst({
+  const user = await prisma.user.findFirst({
     where: {
       email: parseData.data.username,
       password: parseData.data.password,
@@ -89,7 +89,7 @@ router.post("/signin", async (req, res) => {
 router.get("/", authMiddleware, async (req, res) => {
   // @ts-ignore
   const id = req.id;
-  const user = await prismaClient.user.findFirst({
+  const user = await prisma.user.findFirst({
     where: {
       id,
     },
