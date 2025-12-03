@@ -1,172 +1,544 @@
-# 🔧 Workflow Automation Platform
+# 🚀 Workflow Automation Platform
 
-This is a prototype of a ** automation tool** that allows users to create workflows involving **Stripe payments** and **Gmail email sending**. Events are processed in a Kafka-powered system with PostgreSQL as the backend and a microservices-based architecture.
+<div align="center">
+
+![Workflow Automation](https://img.shields.io/badge/Status-Live-success?style=for-the-badge)
+![Next.js](https://img.shields.io/badge/Next.js-15.1.3-black?style=for-the-badge&logo=next.js)
+![Node.js](https://img.shields.io/badge/Node.js-18+-green?style=for-the-badge&logo=node.js)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Database-blue?style=for-the-badge&logo=postgresql)
+![Kafka](https://img.shields.io/badge/Apache_Kafka-Events-black?style=for-the-badge&logo=apache-kafka)
+
+**A powerful, event-driven workflow automation platform built with modern microservices architecture**
+
+[Live Demo](https://zapier-testing.vercel.app/) | [Report Bug](https://github.com/yourusername/workflow-automation/issues) | [Request Feature](https://github.com/yourusername/workflow-automation/issues)
+
+</div>
 
 ---
 
-## 📦 Features
+## 📋 Table of Contents
 
-* **Trigger-based automation**
-* **Send email** via Gmail SMTP
-* **Send money** via Stripe (Test Mode)
-* **Event-driven architecture using Kafka**
-* **Modular microservices** (Processor, Worker, Hooks)
-* **PostgreSQL + Prisma** for DB layer
+- [Overview](#-overview)
+- [Features](#-features)
+- [Architecture](#-architecture)
+- [Tech Stack](#-tech-stack)
+- [Getting Started](#-getting-started)
+- [Deployment](#-deployment)
+- [Project Structure](#-project-structure)
+- [API Documentation](#-api-documentation)
+- [Usage Examples](#-usage-examples)
+- [Contributing](#-contributing)
+- [License](#-license)
 
 ---
 
-## 🧱 Project Structure
+## 🎯 Overview
 
+This **Workflow Automation Platform** enables users to create sophisticated automation workflows (Zaps) that connect webhook triggers with multiple actions like sending emails and processing payments. Built on a scalable microservices architecture with Kafka-powered event processing, it provides reliable, distributed task execution.
+
+### 🌟 Key Highlights
+
+- **Event-Driven Architecture** - Kafka ensures reliable message delivery and processing
+- **Microservices Design** - Independent services for scalability and maintainability
+- **Real-Time Processing** - Instant webhook-to-action execution
+- **Flexible Workflows** - Chain multiple actions in custom sequences
+- **Production Ready** - Deployed across Vercel, Render, and Google Cloud Platform
+
+---
+
+## ✨ Features
+
+### Core Functionality
+
+| Feature | Description |
+|---------|-------------|
+| 🔗 **Webhook Triggers** | Accept HTTP webhooks from any source to initiate workflows |
+| ✉️ **Email Actions** | Send templated emails via Gmail SMTP with dynamic content |
+| 💳 **Payment Processing** | Create Stripe payment links with customizable amounts |
+| 🔄 **Action Chaining** | Execute multiple actions sequentially with data passing |
+| 📊 **Workflow Management** | Create, view, and manage automation workflows |
+
+### Technical Features
+
+- **Transactional Outbox Pattern** - Ensures reliable event processing
+- **Dynamic Template Parsing** - Inject webhook data into action templates
+- **Distributed Task Queue** - Kafka-based async processing
+- **Database Connection Pooling** - Optimized PostgreSQL connections
+- **JWT Authentication** - Secure user sessions and API access
+
+---
+
+## 🏗️ Architecture
 ```
-root/
-├── primary-backend/   # Handles DB, API, auth
-├── frontend/          # Web UI
-├── processor/         # Kafka topic producer
-├── worker/            # Kafka consumer that runs tasks
-├── hooks/             # Action logic (like sending emails/payments)
+┌─────────────┐      ┌──────────────┐      ┌─────────────┐
+│   Frontend  │─────▶│    Backend   │─────▶│  PostgreSQL │
+│  (Next.js)  │      │   (Express)  │      │  (Database) │
+└─────────────┘      └──────┬───────┘      └─────────────┘
+                            │
+                            ▼
+                     ┌──────────────┐
+                     │    Hooks     │
+                     │   Service    │
+                     └──────┬───────┘
+                            │
+                            ▼
+                     ┌──────────────┐
+                     │ ZapRunOutbox │◀──┐
+                     │   (Table)    │   │
+                     └──────┬───────┘   │
+                            │           │
+                            ▼           │
+                     ┌──────────────┐   │
+                     │  Processor   │   │
+                     │   Service    │   │
+                     └──────┬───────┘   │
+                            │           │
+                            ▼           │
+                     ┌──────────────┐   │
+                     │    Kafka     │   │
+                     │ (zap-events) │   │
+                     └──────┬───────┘   │
+                            │           │
+                            ▼           │
+                     ┌──────────────┐   │
+                     │    Worker    │───┘
+                     │   Service    │
+                     └──────┬───────┘
+                            │
+                ┌───────────┴───────────┐
+                ▼                       ▼
+         ┌─────────────┐        ┌─────────────┐
+         │   Gmail     │        │   Stripe    │
+         │    SMTP     │        │     API     │
+         └─────────────┘        └─────────────┘
 ```
 
----
+### Workflow Execution Flow
 
-## ✨ Quick Start
-
-### 📌 Prerequisites
-
-* Docker
-* Node.js (v18+)
-* NPM
-* Kafka (via Docker)
-* Prisma CLI (`npm install -g prisma`)
+1. **Webhook Reception** → Hooks service receives POST request
+2. **Database Insert** → Create ZapRun and ZapRunOutbox entries
+3. **Event Production** → Processor polls outbox and publishes to Kafka
+4. **Event Consumption** → Worker consumes message and executes action
+5. **Action Execution** → Send email or create payment based on action type
+6. **Chain Continuation** → Publish next stage if more actions exist
 
 ---
 
-### ✅ Setup Instructions
+## 🛠️ Tech Stack
 
+### Frontend
+- **Framework**: Next.js 15.1.3 with React 19
+- **Styling**: Tailwind CSS + React Bootstrap
+- **State Management**: Axios for API calls
+- **Deployment**: Vercel
+
+### Backend Services
+- **Runtime**: Node.js 18+ with TypeScript
+- **Framework**: Express.js
+- **ORM**: Prisma with PostgreSQL adapter
+- **Authentication**: JWT tokens
+- **Validation**: Zod schemas
+
+### Infrastructure
+- **Database**: PostgreSQL (Neon/hosted)
+- **Message Broker**: Apache Kafka 3.9.0
+- **Email**: Nodemailer with Gmail SMTP
+- **Payments**: Stripe API
+- **Deployment**: 
+  - Frontend: Vercel
+  - Backend & Hooks: Render
+  - Worker & Processor: Google Cloud Platform
+
+### DevOps
+- **Containerization**: Docker
+- **Database Migrations**: Prisma Migrate
+- **Environment Management**: dotenv
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
 ```bash
-# === Step 1: Setup PostgreSQL ===
-cd primary-backend
-sudo docker run -p 5432:5432 -e POSTGRES_PASSWORD=mysecretpassword postgres
+node >= 18.18
+docker >= 20.10
+postgresql >= 14
+```
 
-# === Step 2: Setup Prisma and Seed DB ===
+### Installation
+
+1. **Clone the repository**
+```bash
+git clone https://github.com/yourusername/workflow-automation.git
+cd workflow-automation
+```
+
+2. **Setup PostgreSQL**
+```bash
+# Using Docker
+docker run -d \
+  -p 5432:5432 \
+  -e POSTGRES_PASSWORD=mysecretpassword \
+  --name postgres \
+  postgres:latest
+```
+
+3. **Setup Primary Backend**
+```bash
+cd primary-backend
+npm install
+
+# Configure environment
+cat > .env << EOF
+DATABASE_URL="postgresql://postgres:mysecretpassword@localhost:5432/zapier?schema=public"
+JWT_PASSWORD="your_secure_jwt_secret"
+EOF
+
+# Initialize database
 npx prisma generate
 npx prisma migrate dev
 npx prisma db seed
 
-# === Step 3: Start Backend Server ===
+# Start server
 npm run dev
 ```
 
+4. **Setup Frontend**
 ```bash
-# === Step 4: Start Frontend UI ===
 cd ../frontend
+npm install
+
+# Start development server
 npm run dev
+# Accessible at http://localhost:3001
 ```
 
+5. **Setup Kafka**
 ```bash
-# === Step 5: Setup Kafka (using Docker) ===
-cd ../processor
+# Start Kafka container
+docker run -d \
+  -p 9092:9092 \
+  --name kafka \
+  apache/kafka:3.9.0
 
-# 1. Start Kafka container
-sudo docker run -p 9092:9092 --name kafka apache/kafka:3.9.0
-
-# 2. Enter Kafka container
-sudo docker exec -it kafka /bin/bash
-
-# 3. Navigate to Kafka binaries
+# Create topic
+docker exec -it kafka /bin/bash
 cd /opt/kafka/bin/
-
-# 4. Create a topic named 'zap-events'
-./kafka-topics.sh --create --topic zap-events --bootstrap-server localhost:9092
-
-# 5. Exit container
+./kafka-topics.sh \
+  --create \
+  --topic zap-events \
+  --bootstrap-server localhost:9092
 exit
+```
 
-# 6. Start Processor Service
+6. **Setup Processor Service**
+```bash
+cd processor
+npm install
+
+# Configure environment
+cat > .env << EOF
+DATABASE_URL="postgresql://postgres:mysecretpassword@localhost:5432/zapier?schema=public"
+EOF
+
+# Start processor
 npm run dev
 ```
 
+7. **Setup Worker Service**
 ```bash
-# === Step 6: Start Worker Service ===
 cd ../worker
+npm install
+
+# Configure environment
+cat > .env << EOF
+DATABASE_URL="postgresql://postgres:mysecretpassword@localhost:5432/zapier?schema=public"
+SMTP_ENDPOINT="smtp.gmail.com"
+SMTP_AUTH_EMAIL="your-email@gmail.com"
+SMTP_AUTH_PASSWORD="your-app-password"
+STRIPE_SECRET_KEY="sk_test_..."
+EOF
+
+# Start worker
 npm run dev
 ```
 
+8. **Setup Hooks Service**
 ```bash
-# === Step 7: Start Hooks Service (Gmail/Stripe logic) ===
 cd ../hooks
+npm install
+
+# Configure environment
+cat > .env << EOF
+DATABASE_URL="postgresql://postgres:mysecretpassword@localhost:5432/zapier?schema=public"
+EOF
+
+# Start hooks service
 npm run dev
 ```
 
 ---
-## 📸 Sample Workflow
 
-### 🔔 Trigger: Webhook (e.g. Stripe, GitHub, or Custom POST)
+## 🌐 Deployment
 
-A user configures a Zap (workflow) with the following steps:
+### Current Deployment
+
+- **Frontend**: [https://zapier-testing.vercel.app/](https://zapier-testing.vercel.app/)
+- **Backend API**: Render (primary-backend)
+- **Hooks Service**: Render
+- **Worker & Processor**: Google Cloud Platform
+
+### Environment Variables
+
+#### Frontend (.env.local)
+```bash
+NEXT_PUBLIC_API_URL=https://your-backend.render.com/api/v1
+```
+
+#### Backend Services (.env)
+```bash
+DATABASE_URL=postgresql://user:pass@host:5432/db
+JWT_PASSWORD=your_jwt_secret
+SMTP_ENDPOINT=smtp.gmail.com
+SMTP_AUTH_EMAIL=your-email@gmail.com
+SMTP_AUTH_PASSWORD=your-app-password
+STRIPE_SECRET_KEY=sk_live_...
+```
 
 ---
 
-### 🧭 Workflow Steps
-
-**Trigger:** A webhook is received at:
-
-POST /hooks/catch/:userId/:zapId
-
-
-
-This can be triggered by external services like Stripe, GitHub, or a cron-based HTTP client.
+## 📁 Project Structure
+```
+workflow-automation/
+├── frontend/                # Next.js frontend application
+│   ├── src/
+│   │   ├── app/            # App router pages
+│   │   ├── components/     # Reusable components
+│   │   └── config.ts       # API configuration
+│   └── package.json
+│
+├── primary-backend/        # Main Express backend
+│   ├── src/
+│   │   ├── router/         # API route handlers
+│   │   ├── db/            # Prisma client setup
+│   │   ├── types/         # Zod schemas
+│   │   └── index.ts       # Server entry point
+│   ├── prisma/
+│   │   ├── schema.prisma  # Database schema
+│   │   └── seed.ts        # Initial data
+│   └── package.json
+│
+├── hooks/                  # Webhook receiver service
+│   ├── src/
+│   │   ├── db/            # Database connection
+│   │   └── index.ts       # Webhook handler
+│   └── package.json
+│
+├── processor/              # Kafka producer service
+│   ├── src/
+│   │   └── index.ts       # Outbox polling
+│   └── package.json
+│
+└── worker/                 # Kafka consumer service
+    ├── src/
+    │   ├── index.ts       # Message consumer
+    │   ├── parser.ts      # Template parser
+    │   ├── sendEmail.ts   # Email sender
+    │   └── sendStripePayment.ts
+    └── package.json
+```
 
 ---
 
-**Action 1: Send Email**
+## 📚 API Documentation
 
-Sends a dynamic email using a template and metadata from the webhook.
+### Authentication
 
+#### POST `/api/v1/user/signup`
 ```json
 {
-  "to": "{{user.email}}",
-  "body": "Hello {{user.name}}, your order has been received!"
+  "username": "user@example.com",
+  "password": "password123",
+  "name": "John Doe"
 }
-Action 2: Generate Stripe Test Payment Link
+```
 
-Creates a Stripe test-mode payment link and sends it to the user. Metadata placeholders are dynamically resolved:
-
-
+#### POST `/api/v1/user/signin`
+```json
 {
-  "amount": "{{order.amount}}",
-  "address": "{{user.email}}"
+  "username": "user@example.com",
+  "password": "password123"
 }
-🛠️ How It Works Internally
-When a webhook is received:
+```
+**Response**: `{ "token": "jwt_token_here" }`
 
-A new row is inserted into the ZapRun table, storing the webhook payload.
+### Workflows
 
-A corresponding row is inserted into the ZapRunOutbox table — this acts as a queue.
-
-A Kafka producer service scans the ZapRunOutbox table and publishes a message to Kafka:
-
-
+#### POST `/api/v1/zap` (Requires Auth)
+Create a new workflow
+```json
 {
-  "zapRunId": "abc123",
-  "stage": 0
+  "availableTriggerId": "webhook",
+  "actions": [
+    {
+      "availableActionId": "email",
+      "actionMetadata": {
+        "email": "{user.email}",
+        "body": "Hello {user.name}!"
+      }
+    }
+  ]
 }
-The message is sent to the Kafka topic: zap-events.
+```
 
-A Kafka worker/consumer then picks up the message and processes the workflow:
+#### GET `/api/v1/zap` (Requires Auth)
+List all workflows for authenticated user
 
+#### GET `/api/v1/zap/:zapId` (Requires Auth)
+Get specific workflow details
 
+### Triggers & Actions
+
+#### GET `/api/v1/trigger/available`
+List available trigger types
+
+#### GET `/api/v1/action/available`
+List available action types
+
+### Webhooks
+
+#### POST `/hooks/catch/:userId/:zapId`
+Trigger workflow execution
+```json
+{
+  "user": {
+    "email": "recipient@example.com",
+    "name": "Jane Smith"
+  },
+  "order": {
+    "amount": "1000"
+  }
+}
+```
 
 ---
 
-## 📒 Tech Stack
+## 💡 Usage Examples
 
-* **Frontend**: React + Tailwind CSS
-* **Backend**: Node.js + Express + Prisma ORM
-* **Database**: PostgreSQL (via Docker)
-* **Messaging**: Apache Kafka
-* **Email**: Gmail SMTP (Nodemailer)
-* **Payments**: Stripe (Test mode)
+### Example 1: Welcome Email Automation
+
+**Scenario**: Send a welcome email when a new user signs up via webhook
+
+1. **Create Workflow**
+```bash
+POST /api/v1/zap
+Authorization: Bearer 
+
+{
+  "availableTriggerId": "webhook",
+  "actions": [
+    {
+      "availableActionId": "email",
+      "actionMetadata": {
+        "email": "{user.email}",
+        "body": "Welcome to our platform, {user.name}! We're excited to have you."
+      }
+    }
+  ]
+}
+```
+
+2. **Trigger Workflow**
+```bash
+POST http://localhost:3002/hooks/catch/1/
+
+{
+  "user": {
+    "email": "newuser@example.com",
+    "name": "Alex Johnson"
+  }
+}
+```
+
+### Example 2: Payment + Email Flow
+
+**Scenario**: Send payment link and confirmation email
+```json
+{
+  "availableTriggerId": "webhook",
+  "actions": [
+    {
+      "availableActionId": "send-money",
+      "actionMetadata": {
+        "amount": "{order.total}",
+        "address": "{user.email}"
+      }
+    },
+    {
+      "availableActionId": "email",
+      "actionMetadata": {
+        "email": "{user.email}",
+        "body": "Payment link sent for ₹{order.total}"
+      }
+    }
+  ]
+}
+```
+
+### Template Variables
+
+Use `{object.property}` syntax in action metadata to inject webhook data:
+```
+{user.email}      → Extracts email from webhook payload
+{user.name}       → Extracts name
+{order.amount}    → Extracts nested order amount
+{payment.id}      → Extracts payment ID
+```
 
 ---
 
+## 🤝 Contributing
 
+Contributions make the open source community an amazing place to learn and create! Any contributions you make are **greatly appreciated**.
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+Distributed under the ISC License.
+
+---
+
+## 🙏 Acknowledgments
+
+- [Next.js](https://nextjs.org/) - React framework
+- [Prisma](https://www.prisma.io/) - Database ORM
+- [Kafka](https://kafka.apache.org/) - Event streaming
+- [Stripe](https://stripe.com/) - Payment processing
+- [Nodemailer](https://nodemailer.com/) - Email sending
+
+---
+
+## 📞 Contact
+
+Your Name - [@yourtwitter](https://twitter.com/yourtwitter)
+
+Project Link: [https://github.com/yourusername/workflow-automation](https://github.com/yourusername/workflow-automation)
+
+Live Demo: [https://zapier-testing.vercel.app/](https://zapier-testing.vercel.app/)
+
+---
+
+<div align="center">
+
+**Made with ❤️ and TypeScript**
+
+⭐ Star this repo if you find it helpful!
+
+</div>
