@@ -527,9 +527,9 @@ Distributed under the ISC License.
 
 ## 📞 Contact
 
-Your Name - [@yourtwitter](https://twitter.com/yourtwitter)
+Ravinder Singh :[LinkedIn](https://www.linkedin.com/in/ravinder-singh-571544247/)
 
-Project Link: [https://github.com/yourusername/workflow-automation](https://github.com/yourusername/workflow-automation)
+Project Link: [https://github.com/ravindersingh74123/Zapier_testing](https://github.com/ravindersingh74123/Zapier_testing)
 
 Live Demo: [https://zapier-testing.vercel.app/](https://zapier-testing.vercel.app/)
 
