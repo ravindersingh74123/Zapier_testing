@@ -1,10 +1,9 @@
 import express from "express";
-import { PrismaClient } from "@prisma/client";
+import prisma from "./db/index";
 import dotenv from "dotenv";
 dotenv.config();
 const app = express();
 
-const client = new PrismaClient();
 
 app.use(express.json());
 
@@ -16,7 +15,7 @@ app.post("/hooks/catch/:userId/:zapId", async (req, res) => {
   // password check logic
 
   // store it in db
-  await client.$transaction(async (tx) => {
+  await prisma.$transaction(async (tx) => {
     const run = await tx.zapRun.create({
       data: {
         zapId: zapId,

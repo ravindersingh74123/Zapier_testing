@@ -4,18 +4,23 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "tsc -b && node src/index.js"
+    "dev": "tsc -b && node src/index.js",
+    "build": "tsc -b",
+    "start": "node dist/src/index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@prisma/client": "^6.1.0",
+    "@prisma/adapter-pg": "^7.0.1",
+    "@prisma/client": "^7.0.1",
     "@types/express": "^5.0.0",
-    "dotenv": "^17.2.3",
-    "express": "^4.21.2"
+    "express": "^4.21.2",
+    "pg": "^8.16.3"
   },
   "devDependencies": {
-    "prisma": "^6.1.0"
+    "@types/pg": "^8.15.6",
+    "dotenv": "^17.2.3",
+    "prisma": "^7.0.1"
   }
 }
